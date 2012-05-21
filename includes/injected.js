@@ -6,8 +6,11 @@
 // @include http*://outlook.com/*
 // @include http*://*.outlook.com/*
 // @include http*://owa.*/owa/*
+// @include http*://*/CookieAuth.dll*
 // ==/UserScript==
 
+window.navigator.userAgent   = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:15.0) Gecko/15.0 Firefox/15.0a1";
+window.navigator.appVersion  = "5.0 (Windows)";
 
 window.addEventListener('load', function() {
     disableCookieCheck();
