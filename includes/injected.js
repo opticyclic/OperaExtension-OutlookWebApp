@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Opera OWA
 // @version 1.00
-// @description Allows refreshing or opening Outlook in new tabs.
+// @description Allows refreshing or opening Outlook in new tabs. Fixes XML request bodies.
 // @see https://gist.github.com/2699143/
 // @include http*://outlook.com/*
 // @include http*://*.outlook.com/*
@@ -11,6 +11,7 @@
 
 window.addEventListener('load', function() {
     disableCookieCheck();
+    removeXmlDeclaration();
 });
 
 
@@ -58,4 +59,21 @@ function deleteFunctions(object)
             }
         }
     }
+}
+
+/**
+ * Removes XML declarations from request bodies. Outlook servers reject request bodies with XML declarations.
+ * Prevents the following error when sending requests:
+ *
+ *     An unexpected error occurred and your request couldn't be handled.
+ */
+function removeXmlDeclaration()
+{
+    var XmlDocumentPrototype = window.Owa.Dom.XmlDocument.prototype;
+    var realGet_Xml = XmlDocumentPrototype.get_Xml;
+
+    XmlDocumentPrototype.get_Xml = function get_Xml()
+    {
+        return realGet_Xml.call(this).replace(/^<\?xml\s+version\s*=\s*(["'])[^\1]+\1[^?]*\?>/i, "");
+    };
 }
